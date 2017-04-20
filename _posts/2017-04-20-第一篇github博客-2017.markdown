@@ -12,4 +12,4 @@ tags:
 
 > 这是简单的Python内容
 
-![img][/img/hadxu.jpg]
+![img](/img/hadxu.jpg)
