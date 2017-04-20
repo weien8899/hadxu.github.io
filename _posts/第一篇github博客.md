@@ -1,0 +1,15 @@
+---
+layout:     post
+title:      "Python"
+subtitle:   "Python"
+date:       2017-04-20
+author:     "hadxu"
+header-img: "img/hadxu.jpg"
+tags:
+    - Python
+    - Test
+---
+
+> 这是简单的Python内容
+
+![img][/img/hadxu.jpg]
