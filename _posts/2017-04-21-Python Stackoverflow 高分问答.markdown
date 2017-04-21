@@ -9,7 +9,7 @@ tags:
     - Python
 ---
 
-#Python备忘录 持续更新中
+# Python备忘录 持续更新中
 
 ----------
 > 这些都是stackoverflow上的高vote答案。
