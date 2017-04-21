@@ -5,11 +5,8 @@ subtitle:   "Python"
 date:       2017-04-20
 author:     "hadxu"
 header-img: "img/hadxu.jpg"
-tags:
-    - Python
-    - Test
 ---
 
 > 这是简单的Python内容
 
-![img](/img/hadxu.jpg)
+###这篇博客是我在根据@黄玄前端大神的基础上改的，由此对前端有了一定的了解，于是搭建该篇博客，用来写写个人感想以及学习方面的东西。
