@@ -4,7 +4,7 @@ title:      "简单的图片搜索服务器"
 subtitle:   "图片搜索"
 date:       2017-05-06
 author:     "hadxu"
-header-img: "img/sis_title.png"
+header-img: "img/hadxu.jpg"
 tags:
     - keras
 ---
