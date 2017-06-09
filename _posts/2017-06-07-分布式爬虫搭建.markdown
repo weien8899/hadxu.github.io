@@ -12,6 +12,31 @@ tags:
 
 # 分布式爬虫搭建
 
+### 更新
+
+设置代理服务器，开始我想将自己的电脑搞成代理服务器的，但看网上的回答如果不是公网ip，不能设置代理的，于是我用腾讯云服务器作为代理服务器，设置如下：
+
+	sudo apt-get install -y tinyproxy
+	sudo vim /etc/tinyproxy.conf
+
+修改 `Allow 127.0.0.1`为
+
+    # Allow 127.0.0.1 表示让所有的ip都可以进行代理。
+
+接下来使用 
+	sudo service tinyproxy restart
+
+测试代理服务器能否用：
+
+	curl -x 182.254.156.224:8888 httpbin.org/get
+
+如果没有错误，说明可以使用。
+
+这样就可以将你的爬虫代理服务器设置为这个啦，快乐爬虫吧！
+
+
+
+
 ## 本文详细介绍了分布式爬虫的搭建
 
 - 首先介绍了scrapy的搭建过程
@@ -103,14 +128,14 @@ tags:
 	    user_query = 'locations,employments,gender,educations,business,voteup_count,thanked_Count,follower_count,following_count,cover_url,following_topic_count,following_question_count,following_favlists_count,following_columns_count,answer_count,articles_count,pins_count,question_count,commercial_question_count,favorite_count,favorited_count,logs_count,marked_answers_count,marked_answers_text,message_thread_token,account_status,is_active,is_force_renamed,is_bind_sina,sina_weibo_url,sina_weibo_name,show_sina_weibo,is_blocking,is_blocked,is_following,is_followed,mutual_followees_count,vote_to_count,vote_from_count,thank_to_count,thank_from_count,thanked_count,description,hosted_live_count,participated_live_count,allow_message,industry_category,org_name,org_homepage,badge[?(type=best_answerer)].topics'
 	    follows_query = 'data[*].answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics'
 	    followers_query = 'data[*].answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics'
-
+	
 	    def start_requests(self):
-		yield Request(self.user_url.format(user=self.start_user, include=self.user_query), self.parse_user)
-		yield Request(self.follows_url.format(user=self.start_user, include=self.follows_query, limit=20, offset=0),
-			      self.parse_follows)
-		yield Request(
-			self.followers_url.format(user=self.start_user, include=self.followers_query, limit=20, offset=0),
-			self.parse_followers)
+	        yield Request(self.user_url.format(user=self.start_user, include=self.user_query), self.parse_user)
+	        yield Request(self.follows_url.format(user=self.start_user, include=self.follows_query, limit=20, offset=0),
+	                      self.parse_follows)
+	        yield Request(
+	                self.followers_url.format(user=self.start_user, include=self.followers_query, limit=20, offset=0),
+	                self.parse_followers)
 
 1. 首先，我们从轮子哥开始爬起，因为大V嘛，其次，通过构建`Request`来进行爬取，
 	
