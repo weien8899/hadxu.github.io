@@ -111,7 +111,7 @@ CNN模型下一节进行讲解，在这一章中，我们使用训练好的模�
 
 ## 结束，最终的效果如下：
 
-![img](/img/in-post/face.PNG)
+![img](/img/in-post/face.png)
 
 github地址为[face_emotion](https://github.com/HadXu/machine-learning/tree/master/face_detection_and_emotion)
 
