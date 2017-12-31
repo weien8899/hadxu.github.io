@@ -12,9 +12,11 @@ tags:
 
 # 那些年，我读过的书
 
-<i class="icon-weibo"></i>
-
 * 2017-09-09 《人类简史》
-<i class="icon-weibo"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
 * 2017-04-30 《历史深度的民国》 
 * 2017-03-21 《哲学家们都干了些什么》
