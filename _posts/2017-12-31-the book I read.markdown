@@ -1,9 +1,8 @@
-# 那些年，我读过的书
 ---
 layout:     post
 title:      "那些年，我读过的书"
 subtitle:   "生活"
-date:       2017-12-30
+date:       2017-12-31
 author:     "hadxu"
 header-img: "img/hadxu.jpg"
 tags:
@@ -11,6 +10,7 @@ tags:
 ---
 
 
+# 那些年，我读过的书
 
 * 2017-09-09 《人类简史》:star:
 * 2017-04-30 《历史深度的民国》 
