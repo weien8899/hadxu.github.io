@@ -1,0 +1,214 @@
+---
+layout:     post
+title:      "Pytorch源码解析"
+subtitle:   "Pytorch"
+date:       2018-01-01
+author:     "hadxu"
+header-img: "img/pytorch.jpg"
+tags:
+    - Pytorch
+    - Python
+---
+
+# Pytorch源码解析
+
+> 要看的懂Pytorch源码，首先做的第一件事就是学会C与Python交互编程。等这方面基础储备够，来看Pytorch代码。
+
+## 第一步 学会C与Python交互编程
+* 与Python交互主要有三种形式 
+   
+   * 第一种 编写C语言文件，编译成二进制文件，使用ctype调用
+   * 第二种 使用swig
+   * 第三种 编写原生态的Pyobject来与Python虚拟机交互
+
+#### 来看第一种，使用C来编写文件交互
+首先编写简单的C语言文件,实现加减
+```
+int add_int(int,int);
+float add_float(float,float);
+
+int add_int(int a,int b){
+	return a+b;
+}
+
+float add_float(float a,float b){
+	return a+b;
+}
+```
+
+接下来使用gcc工具来编译成so文件,会在当前的目录下生成so文件。
+```
+gcc -shared -Wl,-install_name,adder.so -o adder.so -fPIC add.c
+```
+下面打开命令行，敲入下面的代码
+```
+from ctypes import *
+adder = CDLL('./adder.so')
+res_int = adder.add_int(4,5)
+print(res_int)
+>>> 9
+```
+> 这种方法是特别简单，但是有其局限性，比如不能够很好的扩展，使用ctype库与C交互，是非常方便的。
+
+### 来看第三种，使用C来编写文件交互
+第二种就不看了，实际使用中蛮少的。第三种是非常常见的编写Python扩展的方式，利用Python自身的特性，能够编写高质量的代码。但是需要你对Python object了解，才能够与之交互。
+
+> *提示：我使用的为Python3,如果使用的Python2，请改Python3进行测试，毕竟Python3现在是主流。*
+
+### 第一步：编写C语言文件<Extest1.c>
+这里就简单实现斐波那契数列以及字符串翻转，麻雀虽小五脏俱全。
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int fac(int n){
+	if(n<2)
+		return 1;
+	return n*fac(n-1);
+}
+
+char *reverse(char *s){
+	register char t,
+		*p = s,
+		*q = s+strlen(s)-1;
+	while(p<q){
+		t = *p;
+		*p++ = *q;
+		*q-- = t;
+	}
+	return s;
+}
+int main()
+{
+	char s[BUFSIZ];
+
+	printf("4! == %d\n",fac(4));
+	printf("8! == %d\n",fac(8));
+	printf("16! == %d\n",fac(16));
+
+	printf("%d\n", BUFSIZ);
+
+	strcpy(s,"abcdef");
+	printf("%s\n",reverse(s));
+
+	return 0;
+}
+```
+使用命令行编译
+```
+gcc Extest1.c -o Extest
+```
+就能够使用该可执行程序。
+
+###第二步，编写Python版的C程序。
+* 包含Python头文件
+* 为每一个模块函数添加形如PyObject* Module_func()的封装函数。
+* 为每一个模块函数添加一个PyMethodDef ModuleMethods[]数组。
+* 编写PyModuleDef的方法声明。
+* 初始化函数。
+
+1. 第一步 包含Python头文件
+```
+#include "Python.h"
+```
+这步比较简单，只要包含头文件即可。
+
+2. 为每一个方法编写封装函数
+```
+static PyObject *
+Extest_fac(PyObject *self, PyObject* args){
+	int num;
+    // 将传进来的参数进行修改成C形式。
+	if(!PyArg_ParseTuple(args,"i",&num))
+		return NULL;
+    // 将C语言的结果返回成PyObject类型。
+	return (PyObject*)Py_BuildValue("i",fac(num)); 
+}
+static PyObject *
+Extest_doppel(PyObject*self,PyObject* args){
+	char *orig_str;
+	char *dupe_str;
+	PyObject* retval;
+
+	if(!PyArg_ParseTuple(args,"s",&orig_str))
+		return NULL;
+	retval = (PyObject*)Py_BuildValue("ss",orig_str,dupe_str=reverse(strdup(orig_str)));
+	free(dupe_str);
+	return retval;
+}
+static PyObject *
+Extest_test(PyObject *self, PyObject* args){
+	test();
+	return (PyObject*)Py_BuildValue("");
+}
+```
+3. 将所编写的函数包含到PyMethodDef中。
+```
+static PyMethodDef
+ExtestMethods[] = {
+	{"fac",Extest_fac,METH_VARARGS},
+	{"doppel",Extest_doppel,METH_VARARGS},
+	{"test",Extest_test,METH_VARARGS},
+	{NULL,NULL},
+};
+```
+
+4. 将模块进行定义
+```
+static struct PyModuleDef Extestmodule =
+{
+    PyModuleDef_HEAD_INIT,
+    "Extest", /* name of module */
+    "",          /* module documentation, may be NULL */
+    -1,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    ExtestMethods
+};
+```
+5. 初始化
+```
+PyMODINIT_FUNC PyInit_Extest(void)
+{
+    return PyModule_Create(&Extestmodule);
+}
+```
+
+> 整个来说，一共就5步，一步都不能少。
+
+### 编写setup文件
+```
+from distutils.core import setup,Extension
+
+MOD = 'Extest'
+
+setup(name=MOD,ext_modules=[
+	Extension(MOD,sources=['Extest2.c'])
+	])
+```
+其中，Extension为扩展实例，第一个参数为模块名称，第二个参数为模块的C源文件。
+
+接下来，就可以进行编译，安装。
+
+```
+python setup.py install
+```
+就可以在Python中调用了。
+```
+import Extest
+Extest.test()
+>>>
+4! == 24
+8! == 40320
+16! == 2004189184
+1024
+fedcba
+```
+
+整个的Python与C交互就是这样的过程。代码在[Python C交互](https://github.com/HadXu/master_python/tree/master/Python%20C%E6%89%A9%E5%B1%95%E7%BC%96%E5%86%99)
+
+参考：
+* [stackoverflow](https://stackoverflow.com/questions/28305731/compiler-cant-find-py-initmodule-is-it-deprecated-and-if-so-what-should-i)
+* [Python3.6](https://docs.python.org/3/extending/extending.html#the-module-s-method-table-and-initialization-function)
+* [Pytorch源码阅读笔记](https://www.cnblogs.com/shepherd2015/p/8098020.html)
+
+***
