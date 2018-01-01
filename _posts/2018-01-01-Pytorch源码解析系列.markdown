@@ -4,7 +4,7 @@ title:      "Pytorch源码解析"
 subtitle:   "Pytorch"
 date:       2018-01-01
 author:     "hadxu"
-header-img: "img/pytorch.jpg"
+header-img: "img/pytorch.jpeg"
 tags:
     - Pytorch
     - Python
