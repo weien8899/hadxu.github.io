@@ -2,7 +2,7 @@
 layout:     post
 title:      "Pytorch源码解析"
 subtitle:   "Pytorch"
-date:       2018-01-01
+date:       2018-01-03
 author:     "hadxu"
 header-img: "img/pytorch.jpeg"
 tags:
@@ -283,3 +283,114 @@ Extest_reverse(PyObject*self,PyObject*args){
 接下来就可以进行调试。
 
 ***
+
+## 2017-01-03 18:40 更新
+今天看了半天的Python源码分析，终于将PyObject搞懂了。在Python语言中，所有的对象都是PyObject。而PyObject是这样定义的：
+```
+typedef struct _object {
+    PyObject_HEAD
+} PyObject;
+```
+同时，PyObject_HEAD则是用宏来定义：
+```
+#define PyObject_HEAD                   \
+    _PyObject_HEAD_EXTRA                \
+    Py_ssize_t ob_refcnt;               \
+    struct _typeobject *ob_type;
+```
+这里的Py_ssize_t就是int类型，在这里，又出现_PyObject_HEAD_EXTRA这个东西，来看看,但是在实际发布的时候，是没有的。
+```
+#define _PyObject_HEAD_EXTRA            \
+    struct _object *_ob_next;           \
+    struct _object *_ob_prev;
+```
+到这里，PyObject结构体分析完毕，当时看见宏定义感觉不知道是什么，后来了解了，就是用后面内容的来替代前面的名称。不得不说，Python语言底层真的优美。那么定义一个基本类型就很简单了，比如要定义int类型
+```
+typedef struct {
+    PyObject_HEAD
+    long ob_ival;
+} PyIntObject;
+```
+比如float类型
+```
+typedef struct {
+    PyObject_HEAD
+    double ob_fval;
+} PyFloatObject;
+```
+真的是超级简单啊。
+到这边，我们就可以初次看看Pytorch的TH定义。
+```
+struct THPTensor {
+  PyObject_HEAD
+  // Invariant: After __new__ (not __init__), this field is always non-NULL.
+  THTensor *cdata;
+};
+```
+这就定义了一个THPTensor。
+
+### CUDA初探
+在Pytorch中，使用CUDA是非常常见的，在pytorch中，学习到了非常多的关于CUDA的操作。首先，读取各个平台下CUDA文件
+```
+def find_cuda_windows_lib():
+    proc = Popen(['where', 'cudart64*.dll'], stdout=PIPE, stderr=PIPE)
+    out, err = proc.communicate()
+    out = out.decode().strip()
+    if len(out) > 0:
+        if out.find('\r\n') != -1:
+            out = out.split('\r\n')[0]
+        cuda_lib_name = os.path.basename(out)
+        cuda_lib = os.path.splitext(cuda_lib_name)[0]
+        cuda_lib = str(cuda_lib)
+        return ctypes.cdll.LoadLibrary(cuda_lib)
+    else:
+        return None
+
+def _load_cudart():
+    # First check the main program for CUDA symbols
+    if platform.system() == 'Windows':
+        lib = find_cuda_windows_lib()
+    else:
+        lib = ctypes.cdll.LoadLibrary(None)
+    if hasattr(lib, 'cudaGetErrorName'):
+        return lib
+
+    raise RuntimeError(
+        "couldn't find libcudart. Make sure CUDA libraries are installed in a"
+        "default location, or that they're in {}."
+        .format('DYLD_LIBRARY_PATH' if platform.system() == 'Darwin' else
+                'LD_LIBRARY_PATH'))
+```
+接下来进行CUDA的各种操作，而且，这里的操作都是使用Python C的。我们先看看Python来操作GPU。
+```
+lib = ctypes.cdll.LoadLibrary('cudart64_80')
+deviceCount = ctypes.c_int()
+status = lib.cudaGetDeviceCount(ctypes.byref(deviceCount))
+print(deviceCount.value)
+```
+这样就完成了及其简单的CUDA获取。但是在pytorch中，所有的数据都是TH类型的。
+```
+PyObject * THCPModule_getDeviceName_wrap(PyObject *self, PyObject *arg)
+{
+  HANDLE_TH_ERRORS
+  THPUtils_assert(THPUtils_checkLong(arg), "invalid argument to getDeviceName");
+  long device = THPUtils_unpackLong(arg);
+
+  cudaDeviceProp prop;
+  THCudaCheck(cudaGetDeviceProperties(&prop, device));
+  return THPUtils_packString(prop.name);
+  END_HANDLE_TH_ERRORS
+}
+```
+以THCPModule_func_wrap格式命名的在Pytorch中都是torch._C来进行导入的。然后将该方法注册到Method中
+```
+static struct PyMethodDef _THCPModule_methods[] = {
+	...
+	{"_cuda_getDeviceName", (PyCFunction)THCPModule_getDeviceName_wrap, METH_O,   NULL},
+	...
+}
+```
+
+> 一直没有找到cudaGetDeviceProperties在哪？
+
+*** 
