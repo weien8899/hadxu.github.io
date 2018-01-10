@@ -394,3 +394,7 @@ static struct PyMethodDef _THCPModule_methods[] = {
 > 一直没有找到cudaGetDeviceProperties在哪？
 
 *** 
+
+
+
+
