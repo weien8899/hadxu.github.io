@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      "CS224N 第二课"
+subtitle:   "cs224n"
+date:       2018-01-12
+author:     "hadxu"
+header-img: "img/in-post/cs224n/cs224m_head.png"
+tags:
+    - Tensorflow
+    - Python
+---
+
 # CS224N 第二课
 ***
 从今天开始学习cs224n，在之前的斯坦福大学都是cs224d，换了cs224n，可见，深度学习对NLP的影响，本系列会继续更新，将cs224n学完，掌握自然语言处理的方法，第一课就省略了，具体学习地址在[cs224n](http://web.stanford.edu/class/cs224n/syllabus.html)
@@ -14,9 +26,10 @@
 ![](/img/in-post/cs224n/fig3.jpg)
 就是利用它周围的词汇来表示他，这样将会建立一个紧凑的词向量。
 
-2. Word2vec
+2. **Word2vec**
 
 这里提出了两种算法
+
 **Skip-grams (SG)：预测上下文**
 
 **Continuous Bag of Words (CBOW)：预测目标单词**
@@ -30,3 +43,4 @@
 
 那么，目标函数就很明显了
 ![](/img/in-post/cs224n/fig5.jpg)最大化似然函数，也就是最小化目标函数，注意，目标函数在似然函数上取log，然后取负数。那么，如何计算后面的概率函数，成为重点。
+
