@@ -1,0 +1,32 @@
+# CS224N 第二课
+***
+从今天开始学习cs224n，在之前的斯坦福大学都是cs224d，换了cs224n，可见，深度学习对NLP的影响，本系列会继续更新，将cs224n学完，掌握自然语言处理的方法，第一课就省略了，具体学习地址在[cs224n](http://web.stanford.edu/class/cs224n/syllabus.html)
+
+## 第二课
+
+1. 在计算机中，如何使用计算机认识的符号来表示词汇是重点，在很久之前，人类使用独热编码来表示词汇，
+![](/img/in-post/cs224n/fig1.jpg)
+但是这种编码方式存在很大的问题，因为**所有向量都是正交**的，也就是在one-hot编码中，所有的词向量都是无关的，但是在生活中，词汇之间存在关系的。
+![](/img/in-post/cs224n/fig2.jpg)
+
+**Representing words by their context**
+**使用上下文来表达词汇**
+![](/img/in-post/cs224n/fig3.jpg)
+就是利用它周围的词汇来表示他，这样将会建立一个紧凑的词向量。
+
+2. Word2vec
+
+这里提出了两种算法
+**Skip-grams (SG)：预测上下文**
+
+**Continuous Bag of Words (CBOW)：预测目标单词**
+
+**Skip-grams (SG)：预测上下文**
+
+给定当前词汇来预测上下文的概率，并将该概率最大化。
+![](/img/in-post/cs224n/fig4.jpg)
+
+**word2vec细节**
+
+那么，目标函数就很明显了
+![](/img/in-post/cs224n/fig5.jpg)最大化似然函数，也就是最小化目标函数，注意，目标函数在似然函数上取log，然后取负数。那么，如何计算后面的概率函数，成为重点。

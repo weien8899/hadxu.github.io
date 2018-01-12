@@ -4,7 +4,7 @@ header-img: img/head.png
 email: hadxu123@gmail.com
 description: "这里是hadux的博客，研一在读，专注于机器学习、深度学习、爬虫"
 keyword: "Python"
-# url: "https://hadxu.github.io"              # your host, for absolute URL
+url: "https://hadxu.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
