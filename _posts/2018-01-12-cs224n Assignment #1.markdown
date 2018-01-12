@@ -14,6 +14,7 @@ tags:
 
 1. 
 推导Softmax
+
 ```
 softmax(x) = softmax(x+c)
 ```
@@ -47,6 +48,7 @@ return x
 ```
 
 2. 习题e,计算sigmoid及其导数
+
 ```
 def sigmoid(x):
     """
@@ -86,7 +88,9 @@ def sigmoid_grad(s):
 
     return ds
 ```
+
 2. (f)实现梯度检查，使用传统的梯度计算检查
+
 ```
 def gradcheck_naive(f, x):
     """ Gradient check for a function f.
@@ -150,6 +154,7 @@ def gradcheck_naive(f, x):
 
 2. (g) 实现neural
 > 正向反向推导，很简单。
+
 ```
 def forward_backward_prop(X, labels, params, dimensions):
     """
