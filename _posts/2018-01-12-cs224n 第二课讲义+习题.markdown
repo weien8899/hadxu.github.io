@@ -4,7 +4,7 @@ title:      "CS224N 第二课"
 subtitle:   "cs224n"
 date:       2018-01-12
 author:     "hadxu"
-header-img: "img/in-post/cs224n/cs224m_head.png"
+header-img: "img/in-post/cs224n/cs224n_head.png"
 tags:
     - Tensorflow
     - Python
@@ -14,7 +14,7 @@ tags:
 ***
 从今天开始学习cs224n，在之前的斯坦福大学都是cs224d，换了cs224n，可见，深度学习对NLP的影响，本系列会继续更新，将cs224n学完，掌握自然语言处理的方法，第一课就省略了，具体学习地址在[cs224n](http://web.stanford.edu/class/cs224n/syllabus.html)
 
-## 第二课
+## 讲义
 
 1. 在计算机中，如何使用计算机认识的符号来表示词汇是重点，在很久之前，人类使用独热编码来表示词汇，
 ![](/img/in-post/cs224n/fig1.jpg)
@@ -42,5 +42,32 @@ tags:
 **word2vec细节**
 
 那么，目标函数就很明显了
-![](/img/in-post/cs224n/fig5.jpg)最大化似然函数，也就是最小化目标函数，注意，目标函数在似然函数上取log，然后取负数。那么，如何计算后面的概率函数，成为重点。
+![](/img/in-post/cs224n/fig5.jpg)
+最大化似然函数，也就是最小化目标函数，注意，目标函数在似然函数上取log，然后取负数。那么，如何计算后面的概率函数，成为重点。
 
+![](/img/in-post/cs224n/fig6.jpg)
+
+这里使用两种向量来表达
+
+**v_w来表达词w为中心词的编码**
+
+**u_w来表达词w为上下文时候的编码**
+
+![](/img/in-post/cs224n/fig7.jpg)
+
+如何最小化该目标函数，使用梯度下降，**梯度下降大法好**
+![](/img/in-post/cs224n/fig8.jpg)
+
+![](/img/in-post/cs224n/fig9.jpg)
+
+花了几个小时仔细推导，终于将word2vec搞懂了。
+
+>首先，假设输入一个one-hot，该维度为1000x1,W的维度为1000x300，那么由于one-hot只有一个点为1，则输出的为300x1，然后升维，W`为VxD,然后输出为1000x1,然后拿该向量与每一个真实的向量比较，算softmax，即可得到loss，接下来训练。
+
+##  negative sampling(负采样)
+如果仅仅靠输入的原始数据进行训练，会发现参数是非常多的，于是，在原论文中提出了负采样。那么，负采样是怎么意思呢？就是考虑到一对词语(w,c)以及上下文，看看这个一对词语是否在训练数据集中，我们规定P(D=1|w,c)表示(w,c)来自于训练集中，那么相反，P(D=0|w,c)在训练数据中没有，因此，
+
+![](/img/in-post/cs224n/fig10.jpg)这样，一切都非常清楚了，使用word2vec像一种autoencoder，将文本进行降维。
+
+## SVD方式降维
+在神经网络之前，对于文本还可以使用SVD进行降维，但是效率太低，而且如果有新词进来，无法衡量，因此现在主流使用word2vec来进行。
