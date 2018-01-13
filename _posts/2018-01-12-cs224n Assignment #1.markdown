@@ -220,3 +220,5 @@ def forward_backward_prop(X, labels, params, dimensions):
 
     return cost, grad
 ```
+
+

@@ -101,7 +101,7 @@ gcc Extest1.c -o Extest
 ```
 就能够使用该可执行程序。
 
-###第二步，编写Python版的C程序。
+### 第二步，编写Python版的C程序。
 * 包含Python头文件
 * 为每一个模块函数添加形如PyObject* Module_func()的封装函数。
 * 为每一个模块函数添加一个PyMethodDef ModuleMethods[]数组。
