@@ -8,6 +8,7 @@ header-img: "img/in-post/cs224n/cs224n_head.png"
 tags:
     - Tensorflow
     - Python
+    - cs224n
 ---
 
 # CS224N Assignment #1
