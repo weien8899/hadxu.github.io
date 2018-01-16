@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "树莓派无人驾驶小汽车总结"
-subtitle:   "cs224n"
+subtitle:   "Keras"
 date:       2018-01-14
 author:     "hadxu"
 header-img: "img/in-post/IMG_0615.JPG"
