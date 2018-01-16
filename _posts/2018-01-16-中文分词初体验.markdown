@@ -2,7 +2,7 @@
 layout:     post
 title:      "中文分词初体验"
 subtitle:   "cs224n"
-date:       2018-01-13
+date:       2018-01-16
 author:     "hadxu"
 header-img: "img/in-post/cs224n/cs224n_head.png"
 tags:
@@ -10,6 +10,16 @@ tags:
     - Python
     - cs224n
 ---
+
+
+
+# 2018-01-16更新
+
+突然发现一个神奇的网站，[gensim-data](https://github.com/rare-technologies/gensim-data)
+作者将一些常见的语料都收集来使用就很简单了。
+
+
+
 
 # Word2Vec
 通过cs224n前面两节课的学习，大概了解了将语料进行训练，然后构建词向量，从而获得词向量之间的关系。现在开始体验一下如何使用gensim来进行处理。
