@@ -221,4 +221,94 @@ def forward_backward_prop(X, labels, params, dimensions):
     return cost, grad
 ```
 
+3. 实现word2vec
 
+这部分是课程的核心，首先要我们实现一个方法softmaxCostAndGradient。
+
+```
+def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
+    # 计算每一个词的的预测与真实值之间的误差，并返回梯度。
+    
+    ### YOUR CODE HERE
+    
+    vhat = predicted
+    z = np.dot(outputVectors,vhat)
+    preds = softmax(z)
+    cost = -np.log(preds[target])
+
+    z = preds.copy()
+    z[target] -= 1
+    grad = np.outer(z, vhat)
+    gradPred = np.dot(outputVectors.T, z)
+
+
+    ### END YOUR CODE
+
+    return cost, gradPred, grad
+```
+
+实现skipgram。
+
+```
+def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
+             dataset, word2vecCostAndGradient=softmaxCostAndGradient):
+
+    cost = 0.0
+    gradIn = np.zeros(inputVectors.shape)
+    gradOut = np.zeros(outputVectors.shape)
+
+    ### YOUR CODE HERE
+    j = tokens[currentWord]  #获得当前词的下标
+    predicted = inputVectors[j] #获得当前词的输入向量
+    for word in contextWords:
+        target = tokens[word] #获得上下文的每一个词的下标
+        cost_, gradPred, grad = word2vecCostAndGradient(predicted, target, outputVectors, dataset)
+        cost += cost_
+        gradIn[j] += gradPred
+        gradOut += grad
+
+    ### END YOUR CODE
+
+    return cost, gradIn, gradOut
+```
+
+还需要我们实现CBOW，其实与skip-gram差不多。
+
+```
+def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
+         dataset, word2vecCostAndGradient=softmaxCostAndGradient):
+    cost = 0.0
+    gradIn = np.zeros(inputVectors.shape)
+    gradOut = np.zeros(outputVectors.shape)
+
+    ### YOUR CODE HERE
+    
+
+    predicted_indices = [tokens[word] for word in contextWords]
+
+
+    predicted_vectors = inputVectors[predicted_indices]
+
+
+    predicted = np.sum(predicted_vectors, axis=0)
+
+
+    target = tokens[currentWord]
+    cost, gradIn_predicted, gradOut = word2vecCostAndGradient(predicted, target, outputVectors, dataset)
+    # 将所有的预测的概率加起来
+    for i in predicted_indices:
+        gradIn[i] += gradIn_predicted
+
+    ### END YOUR CODE
+
+    return cost, gradIn, gradOut
+```
+
+4. 在q3_sgd.py中需要我们实现sgd算法。简单！
+
+```
+### YOUR CODE HERE
+cost,grad = f(x)
+x -= step * grad
+### END YOUR CODE
+```
