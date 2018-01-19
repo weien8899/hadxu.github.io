@@ -1,0 +1,160 @@
+---
+layout:     post
+title:      "DAG无向图中文分词算法"
+subtitle:   "中文分词"
+date:       2018-01-19
+author:     "hadxu"
+header-img: "img/in-post/cs224n/cs224n_head.png"
+tags:
+    - 中文分词
+    - Python
+---
+
+# DAG无向图中文分词算法
+
+## 分词背景
+着几天一直在学习CS224N的NLP课程，但是感觉CS224N课程并没有分词这一个步骤，原因在于语言上的差异。英语天生的以空格来进行分词，而中文没有，只有一句话结束才有一个分隔符，因此要将CS224N中学习到的技术运用在中文上，需要进行分词这一个步骤。但是，研究人员特别少，但是网上有一个博客写的非常好，[blog](http://blog.csdn.net/daniel_ustc/article/details/48223135),剖析```jieba```中文分词库。于是本人就将该库```clone```到本地，仔细研读该代码。
+
+### DAG无向图构造
+DAG是无环图的缩写，目的是将一个句子使用图的形式来表示，同时DAG的构造需要词典，词典dict.txt形式如下：
+
+```
+A座 3 n
+A股 3 n
+A型 3 n
+A轮 3 n
+AA制 3 n
+AB型 3 n
+...
+```
+该词典的数据结构为(词语 出现次数 词性)。
+
+比如句子”去北京大学玩“对应的DAG为:
+
+{0 : [0], 1 : [1, 2, 4], 2 : [2], 3 : [3, 4], 4 : [4], 5 : [5]}
+
+例如DAG中{0:[0]} 这样一个简单的DAG, 就是表示0位置对应的是词, 就是说0~0,即”去”这个词 在dict.txt中是词条。DAG中{1:[1,2,4]}, 就是表示1位置开始, 在1,2,4位置都是词, 就是说1~1,1~2,1~4 即 “北”，“北京”，“北京大学”这三个词 在dict.txt对应文件的词库中。
+
+在jieba分词中，首先将dict.txt字典解析成二进制文件，便于后来读取。
+
+```
+def check_initialized(self):
+    if not self.initialized:
+        abs_path = _get_abs_path(self.dictionary)
+        if self.cache_file:
+            cache_file = self.cache_file
+        # 默认的cachefile
+        elif abs_path:
+            cache_file = "jieba.cache"
+
+        load_from_cache_fail = True
+        # cachefile 存在
+        if os.path.isfile(cache_file):
+
+            try:
+                with open(cache_file, 'rb') as cf:
+                    self.FREQ, self.total = marshal.load(cf)
+                load_from_cache_fail = False
+            except Exception:
+                load_from_cache_fail = True
+        if load_from_cache_fail:
+            self.FREQ, self.total = self.gen_pfdict(abs_path)
+            # 把dict前缀集合,总词频写入文件
+            try:
+                with open(cache_file, 'w') as temp_cache_file:
+                    marshal.dump((self.FREQ, self.total), temp_cache_file)
+            except Exception:
+                # continue
+                pass
+        # 标记初始化成功
+        self.initialized = True
+```
+
+当词典构建好，就可以对我们的词进行DAG。
+
+```
+s = '今天是2015年9月3号，去天安门广场庆祝抗战胜利70周年'
+
+DAG = {}
+
+N = len(s)
+
+for k in range(N):
+	templist = []
+	i = k
+	frag = s[k]
+
+	while i<N and frag in FREQ: # 如果词语在词典里，则将当前的下标存放
+		if FREQ[frag]:
+			templist.append(i)
+		i += 1
+		frag = s[k:i+1] #获取下一个词
+	if not templist:
+		templist.append(k)
+	DAG[k] = templist
+```
+
+当我们将句子的DAG建立好，就可以使用动态规划来求解最大概率的词的组成：
+
+**值得注意的是，在jieba分词中，使用了概率取对数实现的求最大概率路径问题，原因在于当词汇量过大可能出现溢出的问题。**
+
+```
+def calc(sentence,DAG,route):
+	N = len(sentence)
+	route[N] = (0,0)
+
+	logtotal = log(total)
+
+    # 列表推倒求最大概率对数路径
+    # route[idx] = max([ (概率对数，词语末字位置) for x in DAG[idx] ])
+    # 以idx:(概率对数最大值，词语末字位置)键值对形式保存在route中
+    # route[x+1][0] 表示 词路径[x+1,N-1]的最大概率对数,
+    # [x+1][0]即表示取句子x+1位置对应元组(概率对数，词语末字位置)的概率对数
+
+	for idx in range(N-1,-1,-1):
+		route[idx] = [(log(FREQ.get(sentence[idx:x+1]) or 1) - 
+			logtotal + route[x+1][0],x) for x in DAG[idx]]
+
+		route[idx] = max(route[idx])
+```
+
+当最大的分割构建好，使用无HMM的方式来将词语解析出来
+
+```
+def cut_DAG_NO_HMM(sentence):
+	x = 0
+	N = len(sentence)
+
+	buf = ''
+
+	while x<N:
+		y = route[x][1]+1
+		l_word = sentence[x:y]
+        # 使用re_eng 来判断当前的词是否为字母或数字
+        # re_eng = re.compile('[a-zA-Z0-9]', re.U)
+		if re_eng.match(l_word) and len(l_word)==1:
+			buf += l_word
+			x = y
+		else:
+			if buf:
+				yield buf
+				buf = ''
+			yield l_word
+			x = y
+	if buf:
+		yield buf
+		buf = ''
+```
+
+根据我们的算法，求得上述的分词结果为：
+
+```
+今天/是/2015/年/9/月/3/号/，/去/天安门广场/庆祝/抗战/胜利/70/周年
+```
+
+明显发现，分词的好与不好，是建立在词典的基础之上。
+
+
+
+
+
