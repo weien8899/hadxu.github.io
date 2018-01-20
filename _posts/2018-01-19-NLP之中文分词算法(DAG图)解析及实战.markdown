@@ -10,6 +10,120 @@ tags:
     - Python
 ---
 
+## 2018-01-20更新HMM算法解决OOV问题
+> OOV(Out of Vocabulary)是常见的分词的难点，对于大规模真实文本来说，未登录词对于分词的精度的影响远超歧义切分。一些网络新词，自造词一般都属于这些词，因为这些词在字典中不存在，因此使用DAG图来解决分割问题是不太可行的，由此使用HMM来进行分词。
+
+* HMM的三个问题
+
+    a. 评估问题(概率计算问题) 
+    即给定观测序列 O=O1,O2,O3…Ot和模型参数λ=(A,B,π)，怎样有效计算这一观测序列出现的概率. 
+    (Forward-backward算法) 
+
+    b. 解码问题(预测问题) 
+    即给定观测序列 O=O1,O2,O3…Ot和模型参数λ=(A,B,π)，怎样寻找满足这种观察序列意义上最优的隐含状态序列S。 
+    (viterbi算法,近似算法) 
+
+    c. 学习问题 
+    即HMM的模型参数λ=(A,B,π)未知，如何求出这3个参数以使观测序列O=O1,O2,O3…Ot的概率尽可能的大. 
+    (即用极大似然估计的方法估计参数,Baum-Welch,EM算法)
+
+
+* 而我们的中文分词则是一种解码问题，根据给定的观测序列，以及模型参数求最佳的隐含状态序列。
+> 在我们的中文分词中，找到一个最佳的分词方法使得该分词的概率路径最大。此法适用于在词典中没有出现的词。而找到一种最佳的隐含状态序列即为维**维比特算法**。具体参考李航的《统计学习方法》书第185页的关于维比特算法的解释。
+
+而维比特算法则是
+
+1. 初始化
+2. 递推 t=2,3,4,....T
+3. 终止
+
+
+在我们的分词中，HMM模型是五元组，分别为：
+
+1. 状态空间（即一个句子里面的单词分为BMES，表示的为每个词在该词语中的位置B：开始，M：中间 E：结尾 ，S:单个词。）
+
+2. 观察空间（就是我们的输入的单词。）
+
+3. 开始状态分布（状态的初始分布）
+
+4. 状态转移概率 （各个状态之间转移的概率）
+
+5. 发射概率（在当前状态转移到其他词的概率）
+
+
+
+
+
+> 值得注意的是，我们有状态转移矩阵，但是转移矩阵有一定的限制，即B后面只可能接(M or E)，不可能接(B or E)。而M后面也只可能接(M or E)，不可能接(B, S)。
+根据这个逻辑，我们查看jieba源码中对状态转移矩阵的限制：
+
+```
+PrevStatus = {  
+    'B':('E','S'),  
+    'M':('M','B'),  
+    'S':('S','E'),  
+    'E':('B','M')  
+}  
+```
+维比特算法：
+
+```
+def viterbi(obs,states,start_p, trans_p, emit_p):
+	V = [{}]
+	path = {}
+
+	"""
+	emit_p 发射概率(当前状态(BESM)到观察其他词的概率)
+
+	"""
+	for y in states:
+		V[0][y] = start_p[y]+emit_p[y].get(obs[0],MIN_FLOAT)
+		path[y] = [y]
+	for t in range(1,len(obs)):
+		V.append({})
+		newpath = {}
+		for y in states:
+			em_p = emit_p[y].get(obs[t], MIN_FLOAT)
+		# t时刻状态为y的最大概率(从t-1时刻中选择到达时刻t且状态为y的状态y0)
+			(prob, state) = max([(V[t - 1][y0] + trans_p[y0].get(y, MIN_FLOAT) + em_p, y0) for y0 in PrevStatus[y]])
+			V[t][y] = prob
+			newpath[y] = path[state] + [y] # 只保存概率最大的一种路径
+		path = newpath
+		# 求出最后一个字哪一种状态的对应概率最大，最后一个字只可能是两种情况：E(结尾)和S(独立词)  
+	(prob, state) = max((V[len(obs) - 1][y], y) for y in 'ES')
+
+	return (prob, path[state])
+```
+
+当我们将一个句子的HMM最佳概率算出来，比如“京研”，使用DAG图切分“京/研”,而我们使用维比特算法的话，得到的结果为
+
+```
+-17.377835407692192 ['B', 'E']
+```
+即表示该一个词一个B，一个E，就是一个开头，一个结尾,那即是一个词，即为“京研”，当我们将该最佳切分算出来，就可以进行构造分词
+
+```
+def __cut(sentence):
+	# viterbi算法得到sentence 的切分
+	prob, pos_list = viterbi(sentence, 'BMES', start_P, trans_P, emit_P)
+
+	begin, nexti = 0, 0
+	print(prob, pos_list)
+	for i, char in enumerate(sentence):
+		pos = pos_list[i]
+		if pos == 'B':
+			begin = i
+		elif pos == 'E':
+			yield sentence[begin:i + 1]
+			nexti = i + 1
+		elif pos == 'S':
+			yield char
+			nexti = i + 1
+	if nexti < len(sentence):
+		yield sentence[nexti:]
+```
+那么，关于HMM的分词算法就到此结束了。
+
 # DAG无向图中文分词算法
 
 ## 分词背景
