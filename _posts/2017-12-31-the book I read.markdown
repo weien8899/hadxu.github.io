@@ -12,7 +12,7 @@ tags:
 
 # 那些年，我读过的书，经典
 
-*2018-01-24 《论语》
+* 2018-01-24 《论语》
 <i class="icon-star"></i>
 <i class="icon-star"></i>
 <i class="icon-star"></i>
