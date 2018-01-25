@@ -10,16 +10,21 @@ tags:
 ---
 
 
-# 那些年，我读过的书
+# 那些年，我读过的书，经典
 
-
+*2018-01-24 《论语》
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
 * 2017-09-09 《人类简史》
 <i class="icon-star"></i>
 <i class="icon-star"></i>
 <i class="icon-star"></i>
 <i class="icon-star"></i>
 <i class="icon-star"></i>
-* 2017-04-30 《历史深度的民国》 
+* 2017-04-30 《历史深度的民国》3卷 
 <i class="icon-star"></i>
 <i class="icon-star"></i>
 <i class="icon-star"></i>
