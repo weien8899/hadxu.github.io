@@ -40,7 +40,7 @@ tags:
 
 - Tensorflow简单计算
 
-```
+```python
 import tensorflow as tf
 
 x = tf.Variable(10, name='x')
