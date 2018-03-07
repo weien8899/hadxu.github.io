@@ -70,9 +70,23 @@ tags:
 ## NMT
 ![](/img/in-post/cs224n/fig30.jpg)
 
-一种神经网络模型的机器翻译模型
+一种神经网络模型的机器翻译模型，使用beam技巧来寻找最优的路径
 
 ![](/img/in-post/cs224n/fig31.jpg)
+
+
+### 注意力机制
+
+> NMT到底有哪些问题呢？需要遍历整个文章？不需要的！！！
+
+![](/img/in-post/cs224n/fig32.jpg)
+
+![](/img/in-post/cs224n/fig33.jpg)
+
+### Seq2Seq应用
+
+![](/img/in-post/cs224n/fig34.jpg)
+
 
 
 
