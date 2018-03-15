@@ -2,7 +2,7 @@
 layout:     post
 title:      "从零实现深度学习框架(第四天)"
 subtitle:   "CUDA"
-date:       2018-03-12
+date:       2018-03-15
 author:     "hadxu"
 header-img: "img/in-post/Thunder/thunder.jpg"
 tags:
