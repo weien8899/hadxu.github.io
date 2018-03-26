@@ -10,6 +10,9 @@ tags:
     - Python
 ---
 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+
 # 凸优化极简入门
 
 这篇博客记录了我学习凸优化的历程，所有的知识来源于```Berkeley```大学的```EE 227C (Spring 2018)
