@@ -10,7 +10,6 @@ tags:
     - Python
 ---
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 
 # 凸优化极简入门
@@ -21,11 +20,11 @@ Convex Optimization and Approximation```课程。该课程非常易懂，学习
 
 ### 凸集
 
-什么是凸集？凸集的定义是一个集合 $K\subseteq R^n$,如果满足在$K$中的任意两个点之间的连线所有的点仍在集合$K$中，那么这就叫做凸集。一般的，对于$x,y \in K$ 以及 $\gamma \in  [0,1]$,则有$\gamma x + (1-\gamma)y \in K$。
+什么是凸集？凸集的定义是一个集合 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$K\subseteq&space;R^n$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$K\subseteq&space;R^n$" title="$K\subseteq R^n$" /></a>,如果满足在<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$K$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$K$" title="$K$" /></a>中的任意两个点之间的连线所有的点仍在集合<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$K$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$K$" title="$K$" /></a>中，那么这就叫做凸集。一般的，对于<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$x,y&space;\in&space;K$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$x,y&space;\in&space;K$" title="$x,y \in K$" /></a> 以及 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$\gamma&space;\in&space;[0,1]$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$\gamma&space;\in&space;[0,1]$" title="$\gamma \in [0,1]$" /></a>,则有<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$\gamma&space;x&space;&plus;&space;(1-\gamma)y&space;\in&space;K$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$\gamma&space;x&space;&plus;&space;(1-\gamma)y&space;\in&space;K$" title="$\gamma x + (1-\gamma)y \in K$" /></a>。
 
 ### 凸函数
 
-凸函数的定义对于一个函数 $f:\Omega \rightarrow R$,如果所有的$x,y \in \Omega$并且 $\gamma \in [0,1]$,则有$f(\gamma x + (1-\gamma)y) \leq \gamma f(x)+(1-\gamma)f(y)$。
+凸函数的定义对于一个函数 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$f:\Omega&space;\rightarrow&space;R$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$f:\Omega&space;\rightarrow&space;R$" title="$f:\Omega \rightarrow R$" /></a>,如果所有的<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$x,y&space;\in&space;\Omega$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$x,y&space;\in&space;\Omega$" title="$x,y \in \Omega$" /></a>并且 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$\gamma&space;\in&space;[0,1]$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$\gamma&space;\in&space;[0,1]$" title="$\gamma \in [0,1]$" /></a>,则有<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$f(\gamma&space;x&space;&plus;&space;(1-\gamma)y)&space;\leq&space;\gamma&space;f(x)&plus;(1-\gamma)f(y)$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$f(\gamma&space;x&space;&plus;&space;(1-\gamma)y)&space;\leq&space;\gamma&space;f(x)&plus;(1-\gamma)f(y)$" title="$f(\gamma x + (1-\gamma)y) \leq \gamma f(x)+(1-\gamma)f(y)$" /></a>。
 
 直观上来看，该函数是类似一个碗状。至于为什么凸优化如此重要，就是因为这个世界，**我们需要解决的问题无非就是最大值最小值的问题**，而很多问题并不容易求解，于是我们需要将其转换为凸函数，再进行求解优化。至于机器学习中更加重要了，神经网络作为一个黑盒子，如何优化该黑盒子，成为重点，因为神经网络作为一个函数，但是具体函数具体怎么实现，我们不知道，于是通过其他方式来求解。
 
@@ -33,12 +32,9 @@ Convex Optimization and Approximation```课程。该课程非常易懂，学习
 
 对于任意的连续的，可微的函数来说，都有其对应的泰勒展开
 
-$$
-f(x) = f(x_0) + f^{'}(x_0)(x-x_0)+\frac{f^{''}(x_0)}{2!}(x-x_0)^2+...+
-\frac{f^n(x0)}{n!}(x-x_0)^n
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$$&space;f(x)&space;=&space;f(x_0)&space;&plus;&space;f^{'}(x_0)(x-x_0)&plus;\frac{f^{''}(x_0)}{2!}(x-x_0)^2&plus;...&plus;&space;\frac{f^n(x0)}{n!}(x-x_0)^n&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$$&space;f(x)&space;=&space;f(x_0)&space;&plus;&space;f^{'}(x_0)(x-x_0)&plus;\frac{f^{''}(x_0)}{2!}(x-x_0)^2&plus;...&plus;&space;\frac{f^n(x0)}{n!}(x-x_0)^n&space;$$" title="$$ f(x) = f(x_0) + f^{'}(x_0)(x-x_0)+\frac{f^{''}(x_0)}{2!}(x-x_0)^2+...+ \frac{f^n(x0)}{n!}(x-x_0)^n $$" /></a>
 
-当$x=0$时，就变成了麦克劳林展开，一般的，可以在任意处展开。
+当<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$x=0$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$x=0$" title="$x=0$" /></a>时，就变成了麦克劳林展开，一般的，可以在任意处展开。
 
 ### 凸优化的一些方法
 
@@ -67,9 +63,7 @@ def gradient_descent(init, steps, grad, proj=lambda x: x):
 
 **矩阵投影**，将一个范围内的点投影在**凸集**上,那么就很快的实现优化这一操作。
 
-$$
-P_A(x) = a + P_S(x-a)
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$$&space;P_A(x)&space;=&space;a&space;&plus;&space;P_S(x-a)&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$$&space;P_A(x)&space;=&space;a&space;&plus;&space;P_S(x-a)&space;$$" title="$$ P_A(x) = a + P_S(x-a) $$" /></a>
 
 ```python
 def proj(x):
@@ -104,17 +98,15 @@ grad_f(3.)
 
 目标：
 
-$$ 
-\min \limits_{x} f(x) 
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$$&space;\min&space;\limits_{x}&space;f(x)&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$$&space;\min&space;\limits_{x}&space;f(x)&space;$$" title="$$ \min \limits_{x} f(x) $$" /></a>
 
 #### Basic random search
 
 1. Pick an initial point  x0
 2. Iterate from  t=1:
-    * Pick  $d_t$ be a random direction in  $R^n$.
-    * set $ \eta^* = argmin_{\eta}f(x_{t-1}+\eta d_t)$
-    * put $ x_t = x_{t-1}+\eta^* d_t$
+    * Pick  <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$d_t$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$d_t$" title="$d_t$" /></a> be a random direction in  <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$R^n$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$R^n$" title="$R^n$" /></a>.
+    * set <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$&space;\eta^*&space;=&space;argmin_{\eta}f(x_{t-1}&plus;\eta&space;d_t)$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$&space;\eta^*&space;=&space;argmin_{\eta}f(x_{t-1}&plus;\eta&space;d_t)$" title="$ \eta^* = argmin_{\eta}f(x_{t-1}+\eta d_t)$" /></a>
+    * put <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$&space;x_t&space;=&space;x_{t-1}&plus;\eta^*&space;d_t$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$&space;x_t&space;=&space;x_{t-1}&plus;\eta^*&space;d_t$" title="$ x_t = x_{t-1}+\eta^* d_t$" /></a>
 
 ### 实现
 
@@ -181,7 +173,7 @@ error_plot([least_squares(x) for x in xs])
 
 我们来考虑一个有意思的问题**flappy bird**。
 
-> 假设我们有个小鸟，向前的速度是一定的为$v$,小鸟垂直的位置$h$与重力以及空气的阻力有关系，那么向下的加速度为$F=mg-kv$,同时根据牛顿定律$F=ma$,那么$\frac{dv}{dt}=g-(k/m)v$。
+> 假设我们有个小鸟，向前的速度是一定的为<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$v$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$v$" title="$v$" /></a>,小鸟垂直的位置<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$h$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$h$" title="$h$" /></a>与重力以及空气的阻力有关系，那么向下的加速度为<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$F=mg-kv$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$F=mg-kv$" title="$F=mg-kv$" /></a>,同时根据牛顿定律<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$F=ma$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$F=ma$" title="$F=ma$" /></a>,那么<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\frac{dv}{dt}=g-(k/m)v" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\frac{dv}{dt}=g-(k/m)v" title="\frac{dv}{dt}=g-(k/m)v" /></a>。
 
 ```python
 def flappy_bird(state, action):
@@ -243,7 +235,7 @@ plt.plot(range(len(heights)), heights);
 
 ### 强化学习来解决
 
-对于强化学习，首先需要定义```奖赏```,如果$h \le 0$则给定大的惩罚，如果使用了向上的加速度，就给定小的惩罚。
+对于强化学习，首先需要定义```奖赏```,如果<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;$h&space;\le&space;0$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;$h&space;\le&space;0$" title="$h \le 0$" /></a>则给定大的惩罚，如果使用了向上的加速度，就给定小的惩罚。
 
 ```python
 def flappy_reward(states, actions):
