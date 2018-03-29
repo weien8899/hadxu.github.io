@@ -2,7 +2,7 @@
 layout:     post
 title:      "那些年，我读过的书"
 subtitle:   "生活"
-date:       2018-03-19
+date:       2018-03-29
 author:     "hadxu"
 header-img: "img/hadxu.jpg"
 tags:
@@ -11,6 +11,14 @@ tags:
 
 
 # 那些年，我读过的书，经典
+
+
+* 2018-03-29 《七堂极简物理课》
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star-half-empty"></i>
 
 * 2018-01-24 《历史深处的忧虑》
 <i class="icon-star"></i>
