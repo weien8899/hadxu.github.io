@@ -1,8 +1,8 @@
 ---
 layout:     post
 title:      "从零实现深度学习框架(第二天)"
-subtitle:   "CUDA C++ Python"
-date:       2018-03-13
+subtitle:   "CUDA C++ Python"
+date:       2018-03-14
 author:     "hadxu"
 header-img: "img/in-post/Thunder/thunder.jpg"
 tags:
