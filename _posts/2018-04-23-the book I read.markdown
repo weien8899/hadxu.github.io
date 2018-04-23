@@ -2,7 +2,7 @@
 layout:     post
 title:      "那些年，我读过的书"
 subtitle:   "生活"
-date:       2018-03-29
+date:       2018-04-23
 author:     "hadxu"
 header-img: "img/hadxu.jpg"
 tags:
@@ -12,6 +12,26 @@ tags:
 
 # 那些年，我读过的书，经典
 
+* 2018-04-20 《极简人类史》
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star-half-empty"></i>
+
+* 2018-04-20 《极简海洋文明史》
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star-half-empty"></i>
+
+* 2018-04-20 《哈佛极简中国史》
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star-half-empty"></i>
 
 * 2018-03-29 《七堂极简物理课》
 <i class="icon-star"></i>
